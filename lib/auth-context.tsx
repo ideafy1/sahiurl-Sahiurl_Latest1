@@ -14,7 +14,7 @@ import {
   signInWithPopup,
   updateProfile
 } from 'firebase/auth'
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore'
+import { doc, setDoc, getDoc, serverTimestamp, getFirestore } from 'firebase/firestore'
 import { admin } from '@/lib/firebase/admin'
 import type { UserInfo, DecodedIdToken } from "firebase-admin/auth"
 
@@ -315,4 +315,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export const getClientAuth = () => auth
 
 export const getCurrentUser = () => auth.currentUser
+
+async function fetchUserData(uid: string) {
+    const db = getFirestore();
+    const userDoc = doc(db, 'users', uid);
+    const userSnapshot = await getDoc(userDoc);
+    
+    if (!userSnapshot.exists()) {
+        throw new Error("User data not found");
+    }
+    return userSnapshot.data();
+}
 
