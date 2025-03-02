@@ -8,7 +8,7 @@
     "start": "next start",
     "deploy": "next build && firebase deploy",
     "lint": "next lint",
-    "postinstall": "npx browserslist@latest --update-db",
+    "postinstall": "npx update-browserslist-db@latest",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
