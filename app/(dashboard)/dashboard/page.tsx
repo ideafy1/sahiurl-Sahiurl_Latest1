@@ -18,6 +18,7 @@ import { ErrorBoundary } from "react-error-boundary"
 import { getUserLinks } from "@/lib/firebase/links"
 import { getUserAnalytics } from "@/lib/firebase/analytics"
 import { auth } from "@/lib/firebase/config"
+import { fetchUserData } from "@/lib/auth-context"
 
 // Define proper analytics type
 type DashboardAnalytics = {
@@ -94,25 +95,16 @@ export default function DashboardPage() {
       if (!user) return
 
       try {
-        // Fetch data directly using Firebase SDK
-        const links = await getUserLinks(user.uid, { limit: 5 })
-        const analytics = await getUserAnalytics(user.uid)
-        
-        setData({ links, analytics })
+        // Ensure user is authenticated before fetching data
+        const userData = await fetchUserData(user.uid)
+        // Fetch other data as needed...
       } catch (error) {
-        console.error("Error fetching dashboard data:", error)
-        toast({
-          title: "Error loading dashboard",
-          description: "Could not load your dashboard data. Please try again later.",
-          variant: "destructive",
-        })
-      } finally {
-        setLoading(false)
+        console.error("Error fetching user data:", error)
       }
     }
 
     fetchDashboardData()
-  }, [user, toast])
+  }, [user])
 
   if (!user) {
     return <div>Please log in to access your dashboard.</div>
